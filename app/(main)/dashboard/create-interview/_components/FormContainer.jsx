@@ -8,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { InterviewType } from "@/services/Constants";
+import { InterviewType } from "@/services/constants";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
