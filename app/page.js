@@ -3,7 +3,6 @@
 import React, { useRef } from "react";
 import Link from "next/link";
 import {
-  Mic2,
   Sparkles,
   Clock,
   BarChart3,
@@ -13,36 +12,67 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
+
+import { useRouter } from "next/navigation";
+import { supabase } from "@/services/supabaseClient";
 
 export default function Home() {
   const videoRef = useRef(null);
+  const router = useRouter();
 
   const handleWatchSample = async () => {
     if (!videoRef.current) return;
 
-    // Smooth scroll to the video (nice UX)
     videoRef.current.scrollIntoView({
       behavior: "smooth",
       block: "center",
     });
 
     try {
-      // Try to open the video in fullscreen so it clearly "opens"
       if (videoRef.current.requestFullscreen) {
         await videoRef.current.requestFullscreen();
       }
-
-      // Start playing the video
       await videoRef.current.play();
     } catch (err) {
       console.error("Error opening/playing video:", err);
+    }
+  };
+
+  // Go to Dashboard (or Auth)
+  const handleGoToDashboard = async () => {
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user) {
+        router.push("/dashboard"); // logged in
+      } else {
+        router.push("/auth"); // not logged in
+      }
+    } catch (err) {
+      console.error("Auth check failed, routing to /auth", err);
+      router.push("/auth");
+    }
+  };
+
+  // Create Interview (or Auth)
+  const handleCreateInterview = async () => {
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user) {
+        router.push("/dashboard/create-interview"); // logged in
+      } else {
+        router.push("/auth"); // not logged in
+      }
+    } catch (err) {
+      console.error("Auth check failed, routing to /auth", err);
+      router.push("/auth");
     }
   };
 
@@ -74,8 +104,14 @@ export default function Home() {
             </a>
           </nav>
 
-          <Button asChild size="sm" variant="outline" className="hidden md:inline-flex">
-            <Link href="/dashboard">Go to Dashboard</Link>
+          {/* Go to Dashboard button (uses auth check) */}
+          <Button
+            size="sm"
+            variant="outline"
+            className="hidden md:inline-flex"
+            onClick={handleGoToDashboard}
+          >
+            Go to Dashboard
           </Button>
         </div>
       </header>
@@ -101,11 +137,10 @@ export default function Home() {
           </p>
 
           <div className="flex flex-wrap items-center gap-3">
-            <Button asChild size="lg" className="gap-2">
-              <Link href="/dashboard">
-                <ArrowRight className="h-4 w-4" />
-                Create First Interview
-              </Link>
+            {/* Create First Interview → /dashboard/create-interview OR /auth */}
+            <Button size="lg" className="gap-2" onClick={handleCreateInterview}>
+              <ArrowRight className="h-4 w-4" />
+              Create First Interview
             </Button>
 
             <Button
@@ -124,7 +159,7 @@ export default function Home() {
         <div className="flex-1 flex justify-center" id="video-preview">
           <video
             ref={videoRef}
-            src="/sample.mp4" // make sure /public/sample.mp4 exists
+            src="/sample.mp4"
             controls
             className="rounded-xl shadow-lg h-[280px] w-full max-w-[480px]"
           />
@@ -249,8 +284,12 @@ export default function Home() {
           </p>
 
           <div className="mt-5 flex justify-center gap-3">
-            <Button asChild size="lg" variant="outline">
-              <Link href="/dashboard">View Dashboard</Link>
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={handleGoToDashboard}
+            >
+              View Dashboard
             </Button>
           </div>
         </div>
