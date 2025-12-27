@@ -78,7 +78,7 @@ function Interview() {
 
                 <h2 className='mt-3 font-semibold'>Voice-Powered AI Interview Platform</h2>
 
-                <Image src={'/interview.png'} alt="interview" width={500} height={500}
+                <Image src={'/Interview.png'} alt="interview" width={500} height={500}
                 className='w-[320px]' />
 
                 <h2 className='font-bold text-xl'>{interviewData?.jobPosition}</h2>
