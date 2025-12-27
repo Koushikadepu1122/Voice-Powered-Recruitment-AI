@@ -14,7 +14,7 @@ function Login(){
             provider:'google',
             options: {
         
-        redirectTo: `${window.location.origin}/`,
+        redirectTo: process.env.NEXT_PUBLIC_HOST_URL,
       },
         })
 
